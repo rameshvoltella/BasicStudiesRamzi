@@ -9,8 +9,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -19,7 +24,33 @@ class Main: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.simle)
+        val channel = Channel<Int>()
+
+        lifecycleScope.launch {
+            numbers().collect{
+                Log.d("gotta", "koko>>$it")
+            }
+            retunbumber().collect{
+                Log.d("gotta", "koko2222222>>$it")
+
+            }
+        }
+        Log.d("gotta","sadakku")
+
+        /*  runBlocking {
+              async {
+                  for (x in 1..5)
+                  {println("udayippu sending..")
+                      channel.send(x * x)
+                  }
+
+                  channel.close()
+              }
+              repeat(30) { println("udayippu"+channel.receive()) }
+              println("udayippu Done!")
+          }*/
         Log.d("udayippu","YO")
+      /*
         CoroutineScope(Dispatchers.IO).launch {
             // Simulate making a network call
             delay(2000L)
@@ -55,7 +86,7 @@ class Main: AppCompatActivity() {
 
                 }
         println("Coroutine scope is overouside")
-
+*/
     }
 
     fun main() = lifecycleScope.launch {
@@ -78,4 +109,15 @@ class Main: AppCompatActivity() {
         }
         return 30
     }
+
+ fun retunbumber():Flow<String> =flow{
+     emit("poda")
+ }
+
+    fun numbers(): Flow<Int> = flow {
+        for (i in 1..5) {
+            delay(1000L)
+            emit(i)
+        }
+    }.flowOn(Dispatchers.IO)
 }
